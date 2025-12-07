@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>simple_system - System Information for Eiffel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="simple_* logo" class="logo">
+        </div>
+        <h1>simple_system</h1>
+        <p class="tagline">System Information for Eiffel</p>
+        <div class="badges">
+            <span class="badge badge-rfc">Foundation Layer</span>
+            <span class="badge badge-version">v1.0.0</span>
+            <span class="badge badge-license">MIT</span>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#quick-start">Quick Start</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#api">API Reference</a></li>
+            <li><a href="https://github.com/ljr1981/simple_system">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>
+                <strong>simple_system</strong> provides SCOOP-compatible system information access for
+                Eiffel applications. It wraps Win32 system APIs through a clean C interface, enabling
+                queries about the computer, processor, memory, and operating system without threading
+                complications.
+            </p>
+            <p>
+                Part of the <strong>simple_*</strong> ecosystem of focused, single-purpose Eiffel libraries.
+            </p>
+        </section>
+
+        <section id="quick-start">
+            <h2>Quick Start</h2>
+            <h3>Installation</h3>
+            <pre><code>&lt;library name="simple_system" location="$SIMPLE_SYSTEM\simple_system.ecf"/&gt;</code></pre>
+
+            <h3>Basic Usage</h3>
+            <pre><code>local
+    sys: SIMPLE_SYSTEM
+do
+    create sys
+
+    -- Computer info
+    print ("Computer: " + sys.computer_name + "%N")
+    print ("User: " + sys.user_name + "%N")
+
+    -- Directories
+    print ("Windows: " + sys.windows_directory + "%N")
+    print ("Temp: " + sys.temp_directory + "%N")
+
+    -- Processor info
+    print ("CPUs: " + sys.processor_count.out + "%N")
+    print ("Architecture: " + sys.processor_architecture + "%N")
+    print ("64-bit: " + sys.is_64_bit.out + "%N")
+
+    -- Memory info
+    print ("Total RAM: " + sys.total_memory_gb.out + " GB%N")
+    print ("Available: " + sys.available_memory_gb.out + " GB%N")
+
+    -- OS info
+    print ("OS Version: " + sys.os_version_string + "%N")
+    print ("Windows 11: " + sys.is_windows_11.out + "%N")
+end</code></pre>
+        </section>
+
+        <section id="features">
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Computer Info</h4>
+                    <p>Computer name, user name</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Directories</h4>
+                    <p>Windows, System32, Temp directories</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Processor</h4>
+                    <p>Count, architecture, page size</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Memory</h4>
+                    <p>Total and available in MB/GB</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="api">
+            <h2>API Reference</h2>
+
+            <h3>Computer Information</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>computer_name</code></td><td>Name of the computer</td></tr>
+                <tr><td><code>user_name</code></td><td>Name of the current user</td></tr>
+            </table>
+
+            <h3>Directory Information</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>windows_directory</code></td><td>Windows installation directory (C:\Windows)</td></tr>
+                <tr><td><code>system_directory</code></td><td>System directory (C:\Windows\System32)</td></tr>
+                <tr><td><code>temp_directory</code></td><td>Temporary files directory</td></tr>
+            </table>
+
+            <h3>Processor Information</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>processor_count</code></td><td>Number of logical processors</td></tr>
+                <tr><td><code>processor_architecture</code></td><td>"x86", "x64", "ARM64", or "unknown"</td></tr>
+                <tr><td><code>is_64_bit</code></td><td>Is the processor 64-bit?</td></tr>
+                <tr><td><code>page_size</code></td><td>Memory page size in bytes</td></tr>
+            </table>
+
+            <h3>Memory Information</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>total_memory_mb</code></td><td>Total physical memory in megabytes</td></tr>
+                <tr><td><code>available_memory_mb</code></td><td>Available physical memory in megabytes</td></tr>
+                <tr><td><code>total_memory_gb</code></td><td>Total physical memory in gigabytes</td></tr>
+                <tr><td><code>available_memory_gb</code></td><td>Available physical memory in gigabytes</td></tr>
+            </table>
+
+            <h3>OS Information</h3>
+            <table>
+                <tr><th>Feature</th><th>Description</th></tr>
+                <tr><td><code>os_major_version</code></td><td>OS major version number</td></tr>
+                <tr><td><code>os_minor_version</code></td><td>OS minor version number</td></tr>
+                <tr><td><code>os_build_number</code></td><td>OS build number</td></tr>
+                <tr><td><code>os_version_string</code></td><td>Full OS version (e.g., "10.0.22631")</td></tr>
+                <tr><td><code>is_windows_10_or_later</code></td><td>Is this Windows 10 or later?</td></tr>
+                <tr><td><code>is_windows_11</code></td><td>Is this Windows 11? (Build 22000+)</td></tr>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Part of the <a href="https://github.com/ljr1981">simple_*</a> library collection</p>
+        <p>Dependencies: base, encoding</p>
+        <p class="copyright">MIT License - Copyright (c) 2024-2025, Larry Rix</p>
+    </footer>
+</body>
+</html>
