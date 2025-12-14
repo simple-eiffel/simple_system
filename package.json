@@ -1,0 +1,9 @@
+{
+  "name": "simple_system",
+  "version": "0.1.0",
+  "description": "Simple System Information Library - SCOOP-compatible Win32 API wrapper",
+  "author": "Larry Rix",
+  "license": "MIT",
+  "category": "platform",
+  "keywords": ["system", "os", "environment", "info"]
+}
