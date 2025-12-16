@@ -51,14 +51,14 @@ cd simple_system/Clib
 compile.bat
 ```
 
-3. Set the environment variable:
+3. Set the ecosystem environment variable (one-time setup for all simple_* libraries):
 ```bash
-set SIMPLE_SYSTEM=D:\path\to\simple_system
+set SIMPLE_EIFFEL=D:\prod
 ```
 
 4. Add to your ECF file:
 ```xml
-<library name="simple_system" location="$SIMPLE_SYSTEM\simple_system.ecf"/>
+<library name="simple_system" location="$SIMPLE_EIFFEL/simple_system/simple_system.ecf"/>
 ```
 
 ### Basic Usage
