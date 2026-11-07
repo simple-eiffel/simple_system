@@ -302,9 +302,33 @@ unsigned long long ss_get_total_memory_mb(void) {
 #endif
 }
 
+#ifdef __linux__
+/* MemAvailable counts reclaimable page cache; sysinfo's freeram does not. */
+static unsigned long long ss_linux_mem_available_kb(void) {
+    FILE *f = fopen("/proc/meminfo", "r");
+    char line[128];
+    unsigned long long kb = 0;
+    if (f == NULL) {
+        return 0;
+    }
+    while (fgets(line, sizeof line, f) != NULL) {
+        if (sscanf(line, "MemAvailable: %llu kB", &kb) == 1) {
+            break;
+        }
+    }
+    fclose(f);
+    return kb;
+}
+#endif
+
 unsigned long long ss_get_available_memory_mb(void) {
 #ifdef __linux__
     struct sysinfo info;
+    unsigned long long kb = ss_linux_mem_available_kb();
+    if (kb > 0) {
+        return kb / 1024;
+    }
+    /* Kernels before 3.14 have no MemAvailable. */
     if (sysinfo(&info) != 0) {
         return 0;
     }
