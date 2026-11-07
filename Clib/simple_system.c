@@ -184,6 +184,7 @@ int ss_get_os_build_number(void) {
 #include <sys/sysinfo.h>
 #elif defined(__APPLE__)
 #include <sys/sysctl.h>
+#include <mach/mach.h>
 #endif
 
 void* ss_get_computer_name(void) {
@@ -309,9 +310,13 @@ unsigned long long ss_get_available_memory_mb(void) {
     }
     return ((unsigned long long)info.freeram * info.mem_unit) / (1024 * 1024);
 #elif defined(__APPLE__)
-    /* macOS: use vm_statistics for free memory */
-    /* For simplicity, return 0 - full implementation would use mach_host_statistics */
-    return 0;
+    /* Free plus inactive pages: what the system can hand out without paging. */
+    vm_statistics64_data_t info;
+    mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
+    if (host_statistics64(mach_host_self(), HOST_VM_INFO64, (host_info64_t)&info, &count) != KERN_SUCCESS) {
+        return 0;
+    }
+    return ((unsigned long long)(info.free_count + info.inactive_count) * (unsigned long long)sysconf(_SC_PAGESIZE)) / (1024 * 1024);
 #else
     long pages = sysconf(_SC_AVPHYS_PAGES);
     long page_size = sysconf(_SC_PAGESIZE);
@@ -332,8 +337,24 @@ static struct {
 
 static void parse_os_version(void) {
     struct utsname info;
+#ifdef __APPLE__
+    char product[32];
+    size_t product_size = sizeof(product);
+#endif
 
     if (os_version_cache.initialized) return;
+
+#ifdef __APPLE__
+    /* The macOS version, such as 15.8.2; uname gives the Darwin kernel's. */
+    if (sysctlbyname("kern.osproductversion", product, &product_size, NULL, 0) == 0) {
+        sscanf(product, "%d.%d.%d",
+               &os_version_cache.major,
+               &os_version_cache.minor,
+               &os_version_cache.patch);
+        os_version_cache.initialized = 1;
+        return;
+    }
+#endif
 
     if (uname(&info) == 0) {
         /* Parse release string like "5.15.0-generic" or "22.1.0" */

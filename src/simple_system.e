@@ -169,7 +169,7 @@ feature -- OS Information
 		end
 
 	os_version_string: STRING_32
-			-- Full OS version as string (e.g., "10.0.22631").
+			-- Full OS version as string (e.g., "10.0.22631", or "15.8.2" on macOS).
 		do
 			create Result.make (20)
 			Result.append_integer (os_major_version)
@@ -182,13 +182,13 @@ feature -- OS Information
 	is_windows_10_or_later: BOOLEAN
 			-- Is this Windows 10 or later?
 		do
-			Result := os_major_version >= 10
+			Result := {PLATFORM}.is_windows and os_major_version >= 10
 		end
 
 	is_windows_11: BOOLEAN
 			-- Is this Windows 11? (Build 22000+)
 		do
-			Result := os_major_version >= 10 and os_build_number >= 22000
+			Result := {PLATFORM}.is_windows and os_major_version >= 10 and os_build_number >= 22000
 		end
 
 feature {NONE} -- Implementation

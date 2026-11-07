@@ -35,7 +35,9 @@ feature -- Test routines
 		do
 			create l_sys
 			assert_string_not_empty ("windows_dir_not_empty", l_sys.windows_directory)
-			assert_string_contains ("contains_windows", l_sys.windows_directory.as_lower, "windows")
+			if {PLATFORM}.is_windows then
+				assert_string_contains ("contains_windows", l_sys.windows_directory.as_lower, "windows")
+			end
 		end
 
 	test_system_directory
@@ -45,7 +47,9 @@ feature -- Test routines
 		do
 			create l_sys
 			assert_string_not_empty ("system_dir_not_empty", l_sys.system_directory)
-			assert_string_contains ("contains_system32", l_sys.system_directory.as_lower, "system32")
+			if {PLATFORM}.is_windows then
+				assert_string_contains ("contains_system32", l_sys.system_directory.as_lower, "system32")
+			end
 		end
 
 	test_temp_directory
@@ -111,7 +115,9 @@ feature -- Test routines
 		do
 			create l_sys
 			assert_greater_than ("major_version_positive", l_sys.os_major_version, 0)
-			assert_greater_than ("build_number_positive", l_sys.os_build_number, 0)
+			if {PLATFORM}.is_windows then
+				assert_greater_than ("build_number_positive", l_sys.os_build_number, 0)
+			end
 			assert_string_not_empty ("version_string_not_empty", l_sys.os_version_string)
 		end
 
@@ -136,7 +142,11 @@ feature -- Test routines
 		do
 			create l_sys
 			-- Modern systems should be Win10+
-			assert_true ("is_windows_10_or_later", l_sys.is_windows_10_or_later)
+			if {PLATFORM}.is_windows then
+				assert_true ("is_windows_10_or_later", l_sys.is_windows_10_or_later)
+			else
+				assert_false ("not windows", l_sys.is_windows_10_or_later)
+			end
 		end
 
 end
