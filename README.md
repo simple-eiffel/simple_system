@@ -46,9 +46,14 @@ SIMPLE_SYSTEM provides SCOOP-compatible system information access for Eiffel app
 git clone https://github.com/simple-eiffel/simple_system.git
 ```
 
-2. Compile the C library (the ECF links `Clib/simple_system.o`, which is not in git):
+2. Compile the C library. The ECF links `Clib/simple_system.obj` on Windows and `Clib/simple_system.o` elsewhere; neither is in git.
 ```bash
-cd simple_system
+# Windows: in Clib, from PowerShell or cmd (an MSYS shell mangles the flags),
+# with the Visual Studio tools on the path
+cd simple_system\Clib
+cl /c /nologo /O2 /DWIN32 simple_system.c
+
+# macOS/Linux (from simple_system/)
 make -C Clib
 ```
 
@@ -217,7 +222,7 @@ simple_system/
 ├── Clib/                       # C wrapper library
 │   ├── simple_system.h         # C header file
 │   ├── simple_system.c         # C implementation
-│   └── Makefile                # make -C Clib
+│   └── Makefile                # make -C Clib (macOS/Linux; on Windows, cl /c, above)
 ├── src/                        # Eiffel source
 │   └── simple_system.e         # Main wrapper class
 ├── testing/                    # Test suite
