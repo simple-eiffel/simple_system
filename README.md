@@ -19,7 +19,7 @@
 
 ## Overview
 
-SIMPLE_SYSTEM provides SCOOP-compatible system information access for Eiffel applications. It wraps Win32 system APIs through a clean C interface, enabling queries about the computer, processor, memory, and operating system without threading complications.
+SIMPLE_SYSTEM provides SCOOP-compatible system information access for Eiffel applications. It wraps Win32 on Windows and POSIX calls (sysctl on macOS, sysinfo on Linux) through a clean C interface, enabling queries about the computer, processor, memory, and operating system without threading complications.
 
 **Developed using AI-assisted methodology:** Built interactively with Claude Opus 4.5 following rigorous Design by Contract principles.
 
@@ -30,10 +30,10 @@ SIMPLE_SYSTEM provides SCOOP-compatible system information access for Eiffel app
 ### Information Categories
 
 - **Computer** - Computer name, user name
-- **Directories** - Windows, System32, Temp directories
+- **Directories** - Windows, System32, Temp directories (on macOS and Linux, `windows_directory` returns "/", `system_directory` returns "/usr/bin", and the temp directory comes from `TMPDIR`)
 - **Processor** - Count, architecture (x86/x64/ARM64), page size
 - **Memory** - Total and available memory in MB/GB
-- **OS Version** - Major/minor version, build number, Windows 10/11 detection
+- **OS Version** - Major/minor version, build number, Windows 10/11 detection (the version is the product version on macOS and the kernel release on Linux; the Windows 10/11 checks are False there)
 
 ---
 
@@ -46,15 +46,19 @@ SIMPLE_SYSTEM provides SCOOP-compatible system information access for Eiffel app
 git clone https://github.com/simple-eiffel/simple_system.git
 ```
 
-2. Compile the C library:
+2. Compile the C library (the ECF links `Clib/simple_system.o`, which is not in git):
 ```bash
-cd simple_system/Clib
-compile.bat
+cd simple_system
+make -C Clib
 ```
 
 3. Set the ecosystem environment variable (one-time setup for all simple_* libraries):
 ```bash
+# Windows
 set SIMPLE_EIFFEL=D:\prod
+
+# macOS/Linux
+export SIMPLE_EIFFEL=$HOME/simple_eiffel
 ```
 
 4. Add to your ECF file:
@@ -175,7 +179,7 @@ os_build_number: INTEGER
     -- OS build number.
 
 os_version_string: STRING_32
-    -- Full OS version as string (e.g., "10.0.22631").
+    -- Full OS version as string (e.g., "10.0.22631"), "15.x.y" on macOS.
 
 is_windows_10_or_later: BOOLEAN
     -- Is this Windows 10 or later?
@@ -202,6 +206,8 @@ ec -config simple_system.ecf -target simple_system_tests -c_compile
 ./EIFGENs/simple_system_tests/W_code/simple_system.exe
 ```
 
+(No `.exe` on macOS/Linux: run `./EIFGENs/simple_system_tests/W_code/simple_system`.)
+
 ---
 
 ## Project Structure
@@ -211,12 +217,12 @@ simple_system/
 ├── Clib/                       # C wrapper library
 │   ├── simple_system.h         # C header file
 │   ├── simple_system.c         # C implementation
-│   └── compile.bat             # Build script
+│   └── Makefile                # make -C Clib
 ├── src/                        # Eiffel source
 │   └── simple_system.e         # Main wrapper class
 ├── testing/                    # Test suite
-│   ├── application.e           # Test runner
-│   └── test_simple_system.e    # Test cases
+│   ├── test_app.e              # Test runner
+│   └── lib_tests.e             # Test cases
 ├── simple_system.ecf           # Library configuration
 ├── README.md                   # This file
 └── LICENSE                     # MIT License
@@ -226,15 +232,15 @@ simple_system/
 
 ## Dependencies
 
-- **Windows OS** - System APIs are Windows-specific
+- **Windows, macOS or Linux**
 - **EiffelStudio 23.09+** - Development environment
-- **Visual Studio C++ Build Tools** - For compiling C wrapper
+- **A C compiler** - Visual Studio Build Tools on Windows; clang or gcc elsewhere
 
 ---
 
 ## SCOOP Compatibility
 
-SIMPLE_SYSTEM is fully SCOOP-compatible. The C wrapper handles all Win32 API calls synchronously without threading dependencies, making it safe for use in concurrent Eiffel applications.
+SIMPLE_SYSTEM is fully SCOOP-compatible. The C wrapper handles all system calls synchronously without threading dependencies, making it safe for use in concurrent Eiffel applications.
 
 ---
 
@@ -255,5 +261,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Acknowledgments
 
 - Built with Claude Opus 4.5 (Anthropic)
-- Uses Win32 System APIs (Microsoft)
+- Uses Win32 System APIs (Microsoft) and POSIX system calls
 - Part of the simple_ library collection for Eiffel
