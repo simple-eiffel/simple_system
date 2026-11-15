@@ -148,6 +148,12 @@ end</code></pre>
                 <tr><td><code>is_windows_11</code></td><td>Is this Windows 11? (Build 22000+)</td></tr>
             </table>
         </section>
+
+        <section id="platforms">
+            <h2>Platforms</h2>
+            <p>Tested on Windows, Linux and macOS (see the README's badges). It wraps Win32 on Windows and POSIX calls (sysctl on macOS, sysinfo on Linux). The Windows-specific queries answer sensibly elsewhere: <code>windows_directory</code> is "/", <code>system_directory</code> is "/usr/bin", and the Windows 10 and 11 checks are False.</p>
+        </section>
+
     </main>
 
     <footer>
